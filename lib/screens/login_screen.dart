@@ -132,8 +132,13 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               RaisedButton(
                 onPressed: () {
+                  bool failedLogin = true;
                   final AuthBloc authBloc = BlocProvider.of<AuthBloc>(context);
                   authBloc.dispatch(Login(email: email, password: password));
+                  // TODO(hasnayeen): set failedLogin based on results of authBloc login
+                  if (failedLogin){
+                    showFailedLoginDialog();
+                  }
                 },
                 color: Colors.teal,
                 padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
@@ -163,6 +168,33 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Future<void> showFailedLoginDialog() {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Unsuccessful Login"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text("We're sorry, \nyour login was not successful.\nPlease try again."),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
     );
   }
 }
